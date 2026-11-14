@@ -15,7 +15,7 @@ export function DesktopNav({ className, ...props }: DesktopNavProps) {
   return (
     <nav
       aria-label="Main navigation"
-      className={cn("items-center gap-1", className)}
+      className={cn("flex items-center gap-10", className)}
       {...props}
     >
       {navLinks.map((link) => {
@@ -27,10 +27,7 @@ export function DesktopNav({ className, ...props }: DesktopNavProps) {
             key={link.href}
             href={link.href}
             aria-current={isActive ? "page" : undefined}
-            className={cn(
-              "rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
-              isActive && "bg-muted text-foreground"
-            )}
+            className="text-base leading-[1.8] font-normal tracking-[-0.2px] text-white transition-colors outline-none hover:text-white/70 focus-visible:text-white/70"
           >
             {link.label}
           </Link>

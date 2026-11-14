@@ -12,12 +12,17 @@ export function NavbarLogo({ className, ...props }: NavbarLogoProps) {
       href="/"
       aria-label="HireLoop home"
       className={cn(
-        "inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+        "inline-flex shrink-0 items-center rounded-md outline-none focus-visible:ring-3 focus-visible:ring-white/40",
         className
       )}
       {...props}
     >
-      <Image src={logo} alt="HireLoop" priority className="h-8 w-auto sm:h-9" />
+      <Image
+        src={logo}
+        alt="HireLoop"
+        priority
+        className="h-9 w-auto sm:h-11"
+      />
     </Link>
   )
 }

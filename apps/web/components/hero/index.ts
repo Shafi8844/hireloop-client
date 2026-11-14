@@ -1,0 +1,6 @@
+export { Hero } from "./hero"
+export { HeroBadge } from "./hero-badge"
+export { HeroSearch } from "./hero-search"
+export { HeroStats } from "./hero-stats"
+export { heroStats, trendingPositions } from "./hero-data"
+export type { HeroStat } from "./hero-data"

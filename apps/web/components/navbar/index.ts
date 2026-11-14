@@ -1,5 +1,6 @@
 export { Navbar } from "./navbar"
 export { NavbarLogo } from "./navbar-logo"
+export { NavbarActions } from "./navbar-actions"
 export { DesktopNav } from "./desktop-nav"
 export { MobileNav } from "./mobile-nav"
 export { navLinks } from "./nav-links"

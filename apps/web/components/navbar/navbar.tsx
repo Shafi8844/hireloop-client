@@ -1,46 +1,37 @@
 import type { ComponentProps } from "react"
 import Link from "next/link"
 
-import { buttonVariants } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { DesktopNav } from "./desktop-nav"
 import { MobileNav } from "./mobile-nav"
+import { NavbarActions } from "./navbar-actions"
 import { NavbarLogo } from "./navbar-logo"
 
 export function Navbar({ className, ...props }: ComponentProps<"header">) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-border/70 bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/70",
+        "relative z-50 w-full px-4 pt-4 sm:px-8 sm:pt-5 lg:px-[60px] lg:pt-6",
         className
       )}
       {...props}
     >
-      <div className="mx-auto grid h-16 w-full max-w-7xl grid-cols-[1fr_auto] items-center gap-4 px-4 sm:px-6 md:grid-cols-[1fr_auto_1fr] lg:h-18 lg:px-8">
+      <div className="mx-auto flex h-16 w-full max-w-[1320px] items-center justify-between rounded-[16px] bg-[#222222] pr-2 pl-4 sm:h-[74px] sm:pl-6">
         <NavbarLogo />
 
-        <DesktopNav className="hidden md:flex" />
+        <div className="hidden items-center gap-6 lg:flex">
+          <DesktopNav />
 
-        <div className="hidden items-center justify-end gap-2 md:flex">
-          <Link
-            href="/sign-in"
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "lg" }),
-              "px-4"
-            )}
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/sign-up"
-            className={cn(buttonVariants({ size: "lg" }), "px-4")}
-          >
-            Get Started
-          </Link>
+          <span
+            aria-hidden="true"
+            className="h-6 w-px shrink-0 bg-[#A8A8A8]/40"
+          />
+
+          <NavbarActions />
         </div>
 
-        <div className="flex items-center justify-end md:hidden">
+        <div className="flex items-center lg:hidden">
           <MobileNav />
         </div>
       </div>
