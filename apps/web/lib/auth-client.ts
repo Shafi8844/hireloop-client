@@ -1,9 +1,11 @@
 import { createAuthClient } from "better-auth/react"
+import { inferAdditionalFields } from "better-auth/client/plugins"
 
-// Same-origin by default: the client calls /api/auth on the current host.
-// Set NEXT_PUBLIC_BETTER_AUTH_URL only if the API lives on another origin.
+import type { auth } from "@/lib/auth"
+
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+  plugins: [inferAdditionalFields<typeof auth>()],
 })
 
 export const { signIn, signUp, useSession } = authClient

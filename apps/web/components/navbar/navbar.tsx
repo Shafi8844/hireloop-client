@@ -5,7 +5,7 @@ import { cn } from "@workspace/ui/lib/utils"
 
 import { DesktopNav } from "./desktop-nav"
 import { MobileNav } from "./mobile-nav"
-import { NavbarActions } from "./navbar-actions"
+import { NavbarAccount } from "./navbar-account"
 import { NavbarLogo } from "./navbar-logo"
 
 export function Navbar({ className, ...props }: ComponentProps<"header">) {
@@ -28,7 +28,7 @@ export function Navbar({ className, ...props }: ComponentProps<"header">) {
             className="h-6 w-px shrink-0 bg-[#A8A8A8]/40"
           />
 
-          <NavbarActions />
+          <NavbarAccount />
         </div>
 
         <div className="flex items-center lg:hidden">

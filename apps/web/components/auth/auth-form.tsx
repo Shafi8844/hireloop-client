@@ -3,10 +3,12 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+
 import {
   BriefcaseBusiness,
   Eye,
   EyeOff,
+  ShieldCheck,
   UserRound,
   type LucideIcon,
 } from "lucide-react"
@@ -117,7 +119,6 @@ type RoleOptionProps = {
   onSelect: () => void
   icon: LucideIcon
   title: string
-  description: string
 }
 
 function RoleOption({
@@ -125,7 +126,6 @@ function RoleOption({
   onSelect,
   icon: Icon,
   title,
-  description,
 }: RoleOptionProps) {
   return (
     <button
@@ -134,7 +134,7 @@ function RoleOption({
       aria-checked={selected}
       onClick={onSelect}
       className={cn(
-        "flex items-center gap-2.5 rounded-[11px] border p-2.5 text-left transition-colors outline-none focus-visible:ring-3 focus-visible:ring-[#5C53FE]/40",
+        "flex items-center justify-center gap-1.5 rounded-[11px] border p-2 transition-colors outline-none focus-visible:ring-3 focus-visible:ring-[#5C53FE]/40",
         selected
           ? "border-[#5C53FE] bg-[#5C53FE]/10"
           : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
@@ -142,20 +142,15 @@ function RoleOption({
     >
       <span
         className={cn(
-          "inline-flex size-8 shrink-0 items-center justify-center rounded-[9px] transition-colors",
+          "inline-flex size-7 shrink-0 items-center justify-center rounded-[8px] transition-colors",
           selected ? "bg-[#5C53FE] text-white" : "bg-white/[0.06] text-white/50"
         )}
       >
-        <Icon aria-hidden="true" className="size-4" strokeWidth={1.75} />
+        <Icon aria-hidden="true" className="size-3.5" strokeWidth={1.75} />
       </span>
 
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="font-[family-name:var(--font-manrope)] text-[13px] leading-tight font-semibold text-white">
-          {title}
-        </span>
-        <span className="font-[family-name:var(--font-manrope)] text-[11px] leading-tight text-white/40">
-          {description}
-        </span>
+      <span className="font-[family-name:var(--font-manrope)] text-[12px] leading-tight font-semibold whitespace-nowrap text-white">
+        {title}
       </span>
     </button>
   )
@@ -167,7 +162,9 @@ type AuthFormProps = {
 
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter()
-  const [role, setRole] = React.useState<"seeker" | "recruiter">("seeker")
+  const [role, setRole] = React.useState<"seeker" | "recruiter" | "admin">(
+    "seeker"
+  )
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -179,36 +176,37 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError(null)
 
     const formData = new FormData(event.currentTarget)
-    const data=Object.fromEntries(formData.entries())
+    const data = Object.fromEntries(formData.entries())
 
     if (!isSignUp) {
-      try{
-        const {data:SignInResponse,error}= await authClient.signIn.email({
-        email:String(data.email),
-        password:String(data.password),
-        rememberMe:true,
-        callbackURL:"/"
-      })
-      console.log(SignInResponse)
-      if (error) {
-        console.log(error);
-        return
-      }
-      }
-      catch{
-        console.log(error);
+      try {
+        const { data: SignInResponse, error } = await authClient.signIn.email({
+          email: String(data.email),
+          password: String(data.password),
+          rememberMe: true,
+          callbackURL: "/",
+        })
+        console.log(SignInResponse)
+        if (error) {
+          console.log(error)
+          return
+        }
+      } catch {
+        console.log(error)
       }
     }
 
     setIsSubmitting(true)
-
+    
     try {
-      const { error: signUpError } = await authClient.signUp.email({
+      const { data:signUpresponse, error: signUpError } = await authClient.signUp.email({
         name: String(formData.get("name") ?? ""),
         email: String(formData.get("email") ?? ""),
         password: String(formData.get("password") ?? ""),
-        callbackURL: "/"
+        role:String(formData.get("role") ??""),
+        callbackURL: "/",
       })
+      console.log(signUpresponse)
 
       if (signUpError) {
         setError(signUpError.message ?? "Could not create your account.")
@@ -218,6 +216,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       setError("Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
+      router.push('/');
     }
   }
 
@@ -283,21 +282,25 @@ export function AuthForm({ mode }: AuthFormProps) {
             <div
               role="radiogroup"
               aria-label="Account type"
-              className="grid grid-cols-2 gap-2"
+              className="grid grid-cols-3 gap-2"
             >
               <RoleOption
                 selected={role === "seeker"}
                 onSelect={() => setRole("seeker")}
                 icon={UserRound}
-                title="Job Seeker"
-                description="Find work"
+                title="Seeker"
               />
               <RoleOption
                 selected={role === "recruiter"}
                 onSelect={() => setRole("recruiter")}
                 icon={BriefcaseBusiness}
                 title="Recruiter"
-                description="Hire talent"
+              />
+              <RoleOption
+                selected={role === "admin"}
+                onSelect={() => setRole("admin")}
+                icon={ShieldCheck}
+                title="Admin"
               />
             </div>
             <input type="hidden" name="role" value={role} />

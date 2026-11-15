@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { MenuIcon } from "lucide-react"
+import { LogOut, MenuIcon, UserRound } from "lucide-react"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -17,13 +17,19 @@ import {
 } from "@workspace/ui/components/sheet"
 import { cn } from "@workspace/ui/lib/utils"
 
+import { useSession } from "@/lib/auth-client"
+
+import { getInitials } from "./initials"
 import { getStartedLinkClassName, signInLinkClassName } from "./navbar-actions"
 import { NavbarLogo } from "./navbar-logo"
 import { navLinks } from "./nav-links"
+import { useSignOut } from "./use-sign-out"
 
 export function MobileNav() {
   const pathname = usePathname()
   const [open, setOpen] = React.useState(false)
+  const { data: session, isPending } = useSession()
+  const { signOut, isSigningOut } = useSignOut()
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -81,20 +87,67 @@ export function MobileNav() {
         </nav>
 
         <SheetFooter className="gap-2 border-t border-white/10 p-4">
-          <Link
-            href="/sign-in"
-            onClick={() => setOpen(false)}
-            className={cn(signInLinkClassName, "h-12 w-full")}
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/sign-up"
-            onClick={() => setOpen(false)}
-            className={cn(getStartedLinkClassName, "h-12 w-full")}
-          >
-            Get Started
-          </Link>
+          {isPending ? (
+            <div
+              aria-hidden="true"
+              className="h-12 w-full animate-pulse rounded-[12px] bg-white/10"
+            />
+          ) : session?.user ? (
+            <>
+              <div className="flex items-center gap-3 rounded-[12px] bg-white/[0.04] px-3 py-2.5">
+                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#5C53FE] font-[family-name:var(--font-manrope)] text-sm font-semibold text-white">
+                  {getInitials(session.user)}
+                </span>
+                <span className="flex min-w-0 flex-col">
+                  <span className="truncate font-[family-name:var(--font-manrope)] text-sm font-semibold text-white">
+                    {session.user.name || "Your account"}
+                  </span>
+                  <span className="truncate font-[family-name:var(--font-manrope)] text-xs text-white/45">
+                    {session.user.email}
+                  </span>
+                </span>
+              </div>
+
+              <Link
+                href="/profile/edit"
+                onClick={() => setOpen(false)}
+                className="flex h-12 w-full items-center gap-2.5 rounded-[12px] px-4 font-[family-name:var(--font-manrope)] text-base font-medium text-white/80 transition-colors outline-none hover:bg-white/10 hover:text-white focus-visible:ring-3 focus-visible:ring-white/40"
+              >
+                <UserRound aria-hidden="true" className="size-5" />
+                Edit profile
+              </Link>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  await signOut()
+                  setOpen(false)
+                }}
+                disabled={isSigningOut}
+                className="flex h-12 w-full items-center gap-2.5 rounded-[12px] px-4 font-[family-name:var(--font-manrope)] text-base font-medium text-[#FF9B9B] transition-colors outline-none hover:bg-[#FF6B6B]/10 hover:text-[#FFC2C2] focus-visible:ring-3 focus-visible:ring-[#FF6B6B]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <LogOut aria-hidden="true" className="size-5" />
+                {isSigningOut ? "Signing out..." : "Sign out"}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/sign-in"
+                onClick={() => setOpen(false)}
+                className={cn(signInLinkClassName, "h-12 w-full")}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/sign-up"
+                onClick={() => setOpen(false)}
+                className={cn(getStartedLinkClassName, "h-12 w-full")}
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>
